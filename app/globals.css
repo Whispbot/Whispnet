@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0118;
+  --background-secondary: #14052c;
+  --background-transparent: #0a0118aa;
+  --background-transparent-secondary: #14052caa;
+  --text-primary: #000;
+  --text-secondary: #222;
+  --text-tertiary: #444;
+  --text-selection: #bbaa99;
+  --border: #00000022;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--text-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0118;
+    --background-secondary: #14052c;
+    --background-transparent: #0a0118aa;
+    --background-transparent-secondary: #14052caa;
+    --text-primary: #fff;
+    --text-secondary: #ddd;
+    --text-tertiary: #ccc;
+    --text-selection: #461594;
+    --border: #ffffff22;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  font-family: var(--font-nunito), sans-serif;
+}
+
+.text-primary {
+  color: var(--text-primary);
+}
+.text-secondary {
+  color: var(--text-secondary);
+}
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+.text-background-primary {
+  color: var(--background);
+}
+.text-background-secondary {
+  color: var(--background-secondary);
+}
+.bg-primary {
+  background-color: var(--background);
+}
+.bg-secondary {
+  background-color: var(--background-secondary);
+}
+.bg-faded {
+  background-color: var(--background-transparent);
+}
+.bg-faded-secondary {
+  background-color: var(--background-transparent-secondary);
+}
+.border-custom {
+  border-color: var(--border);
+}
+
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background); /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(
+    --background-secondary
+  ); /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Roundness of the scrollbar thumb */
+  border: 0; /* Padding around the scrollbar thumb */
+}
+
+::selection {
+  background-color: var(--text-selection);
+}
