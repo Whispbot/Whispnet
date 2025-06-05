@@ -17,6 +17,8 @@ const BotStatus = () => {
   const [shards, setShards] = useState<
     { state: ShardState; lastAck: Date; ping: number }[]
   >([]);
+  const [previousLogs, setPreviousLogs] = useState<string[]>([]);
+  const [lastLog, setLastLog] = useState<string[]>([]);
 
   useEffect(() => {
     if (!websocket.connected) return;
@@ -42,6 +44,25 @@ const BotStatus = () => {
         );
         return;
       }
+
+      setPreviousLogs((prev) => {
+        let updated = [...prev];
+        updated.unshift(
+          `[Shard ${shard_data.shard_id
+            .toString()
+            .padStart((shard_data.total_shards - 1).toString().length, "0")}] ${
+            shard_data.message
+          }`
+        );
+        updated = updated.slice(0, 20);
+        return updated;
+      });
+
+      setLastLog((prev) => {
+        let updated = [...prev];
+        updated[shard_data.shard_id] = shard_data.message;
+        return updated;
+      });
 
       const shard_index = shard_data.shard_id;
 
@@ -104,52 +125,80 @@ const BotStatus = () => {
     );
 
   return (
-    <div className="w-1/2 mx-auto mt-10 flex flex-col gap-2">
-      <div>
-        <h1 className="text-[2.5vh]">Shards</h1>
-      </div>
-      <div className="w-full flex flex-col gap-1">
-        <div className="flex flex-row w-full items-center">
-          <p className="w-1/6 text-center">Shard ID</p>
-          <p className="w-1/6 text-center">Status</p>
-          <p className="w-1/6 text-center">Ping</p>
-          <p className="w-1/6 text-center">Last Ack (s)</p>
+    <div className="flex flex-row justify-center px-10 mt-5">
+      <div className="w-2/3 flex flex-col gap-2 px-5">
+        <div>
+          <h1 className="text-[2.5vh]">Shards</h1>
         </div>
-        {shards.length === 0 ? (
-          <div className="w-full text-center text-secondary">
-            Waiting for shards...
+        <div className="w-full flex flex-col gap-1">
+          <div className="flex flex-row w-full items-center">
+            <p className="w-1/6 text-center">Shard ID</p>
+            <p className="w-1/6 text-center">Status</p>
+            <p className="w-1/6 text-center">Ping</p>
+            <p className="w-1/6 text-center">Last Ack (s)</p>
+            <p className="w-2/6 text-center">Last Log</p>
           </div>
-        ) : (
-          shards.map((shard, index) => {
-            return (
-              <div
-                className="w-full p-1 items-center flex flex-row"
-                key={index}
-              >
-                <p className="text-center w-1/6 font-mono font-semibold">
-                  {index
-                    .toString()
-                    .padStart((shards.length - 1).toString().length, "0")}
+          {shards.length === 0 ? (
+            <div className="w-full text-center text-secondary">
+              Waiting for shards...
+            </div>
+          ) : (
+            shards.map((shard, index) => {
+              return (
+                <div
+                  className="w-full p-1 items-center flex flex-row"
+                  key={index}
+                >
+                  <p className="text-center w-1/6 font-mono font-semibold">
+                    {index
+                      .toString()
+                      .padStart((shards.length - 1).toString().length, "0")}
+                  </p>
+                  <p className="w-1/6 text-center font-mono">
+                    {ShardState[shard.state]}
+                  </p>
+                  <p className="w-1/6 text-center font-mono">
+                    {Math.round(shard.ping == -1 ? 0 : shard.ping)
+                      .toString()
+                      .padStart(3, "0")}
+                  </p>
+                  <p className="w-1/6 text-center font-mono">
+                    {shard.lastAck.getTime() != 0
+                      ? Math.round(
+                          (Date.now() - shard.lastAck.getTime()) / 1000
+                        )
+                          .toString()
+                          .padStart(5, "0")
+                      : "NEVER"}
+                  </p>
+                  <p className="w-2/6 font-mono text-center">
+                    {lastLog[index]}
+                  </p>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+      <div className="border-l-2 border-custom"></div>
+      <div className="w-1/3 flex flex-col gap-2 px-5">
+        <div>
+          <h1 className="text-[2.5vh]">Feed</h1>
+          <div className="flex flex-col">
+            {previousLogs.length === 0 ? (
+              <div className="text-secondary text-center">No logs yet...</div>
+            ) : (
+              previousLogs.map((log, index) => (
+                <p
+                  key={index}
+                  className="text-[1.5vh] font-mono text-secondary"
+                >
+                  {log}
                 </p>
-                <p className="w-1/6 text-center font-mono">
-                  {ShardState[shard.state]}
-                </p>
-                <p className="w-1/6 text-center font-mono">
-                  {Math.round(shard.ping == -1 ? 0 : shard.ping)
-                    .toString()
-                    .padStart(3, "0")}
-                </p>
-                <p className="w-1/6 text-center font-mono">
-                  {shard.lastAck.getTime() != 0
-                    ? Math.round((Date.now() - shard.lastAck.getTime()) / 1000)
-                        .toString()
-                        .padStart(5, "0")
-                    : "NEVER"}
-                </p>
-              </div>
-            );
-          })
-        )}
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
