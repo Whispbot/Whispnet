@@ -23,7 +23,7 @@ export const WebsocketProvider = ({
   url
 }: {
   children: React.ReactNode;
-  url: string;
+  url: string | undefined;
 }) => {
   const [socket, setSocket] = useState<typeof Socket | null>(null);
   const [connected, setConnected] = useState(false);
@@ -32,6 +32,10 @@ export const WebsocketProvider = ({
 
   useEffect(() => {
     if (!user) return;
+    if (!url) {
+      console.error("Websocket URL is not defined");
+      return;
+    }
 
     const socketIo = io(url);
 

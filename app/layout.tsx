@@ -27,7 +27,13 @@ export default function RootLayout({
       <body className={`${nunito.variable} antialiased`}>
         <NotificationProvider>
           <SessionProvider>
-            <WebsocketProvider url={"http://localhost:4000"}>
+            <WebsocketProvider
+              url={
+                process.env.NODE_ENV == "development"
+                  ? "http://localhost:4000"
+                  : process.env.WEBSOCKET_URL
+              }
+            >
               <Header />
               {children}
               <Footer />
