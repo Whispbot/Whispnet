@@ -59,7 +59,7 @@ const BotStatus = () => {
       });
 
       setLastLog((prev) => {
-        let updated = [...prev];
+        const updated = [...prev];
         updated[shard_data.shard_id] = shard_data.message;
         return updated;
       });
