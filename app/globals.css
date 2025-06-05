@@ -21,8 +21,8 @@
   :root {
     --background: #0a0118;
     --background-secondary: #14052c;
-    --background-transparent: #0a0118aa;
-    --background-transparent-secondary: #14052caa;
+    --background-transparent: #0a0118dd;
+    --background-transparent-secondary: #14052cdd;
     --text-primary: #fff;
     --text-secondary: #ddd;
     --text-tertiary: #ccc;

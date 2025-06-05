@@ -16,16 +16,19 @@ type User = {
   mfa_enabled: boolean | undefined;
   locale: string | undefined;
   premium_type: number | undefined;
+  token: string;
 };
 
 type SessionContextType = {
   user: User | null;
   loading: boolean;
+  refreshUser: () => void;
 };
 
 const SessionContext = createContext<SessionContextType>({
   user: null,
-  loading: true
+  loading: true,
+  refreshUser: () => {}
 });
 
 export const SessionProvider = ({
@@ -63,8 +66,13 @@ export const SessionProvider = ({
     fetchUser();
   }, []);
 
+  const refreshUser = () => {
+    setUser(null);
+    setLoading(true);
+  };
+
   return (
-    <SessionContext.Provider value={{ user, loading }}>
+    <SessionContext.Provider value={{ user, loading, refreshUser }}>
       {children}
     </SessionContext.Provider>
   );

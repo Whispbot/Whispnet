@@ -1,13 +1,16 @@
 "use client";
 import Icon from "@/components/icon";
+import { useNotification } from "@/components/notification-context";
 import { useSession } from "@/components/session-context";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
 const HeaderUser = () => {
-  const { loading, user } = useSession();
+  const { loading, user, refreshUser } = useSession();
   const [display_dropdown, set_display_dropdown] = useState(false);
+
+  const notifications = useNotification();
 
   const close = () => {
     set_display_dropdown(false);
@@ -35,20 +38,14 @@ const HeaderUser = () => {
                   {user?.username}
                 </span>
                 <div className="flex flex-row">
-                  {/* {(user?.permission || 0) > 0 && (
+                  {window.location.hostname == "localhost" && (
                     <>
-                      <span className="text-xs text-gray-400">
-                        {
-                          { 1: "Support", 2: "Management", 3: "Developer" }[
-                            user?.permission || 1
-                          ]
-                        }
-                      </span>
+                      <span className="text-xs text-gray-400">Dev Mode</span>
                       <span className="ml-[3px] mr-[2px] text-xs text-gray-400">
                         •
                       </span>
                     </>
-                  )} */}
+                  )}
                   <span className="text-xs text-gray-400">View Profile</span>
                 </div>
               </div>
@@ -78,7 +75,7 @@ const HeaderUser = () => {
               <Icon iconName="Laptop2" className="h-[18px]" />
               CAD
             </Link>
-            {/* {(user?.permission || 0) > 0 && (
+            {window.location.hostname == "localhost" && (
               <>
                 <div className="h-[1px] bg-[rgba(255,255,255,0.1)] my-2" />
                 <Link
@@ -89,18 +86,31 @@ const HeaderUser = () => {
                   <Icon iconName="Microscope" className="h-[18px]" />
                   Admin
                 </Link>
-                {(user?.permission || 0) == 3 && (
-                  <Link
-                    href="/admin/database/view"
-                    onClick={close}
-                    className="flex items-center gap-3 p-3 rounded-md hover:bg-[rgba(255,255,255,0.1)] text-white text-sm"
-                  >
-                    <Icon iconName="HardDrive" className="h-[18px]" />
-                    Database
-                  </Link>
-                )}
+                <Link
+                  href="/admin/database/view"
+                  onClick={close}
+                  className="flex items-center gap-3 p-3 rounded-md hover:bg-[rgba(255,255,255,0.1)] text-white text-sm"
+                >
+                  <Icon iconName="HardDrive" className="h-[18px]" />
+                  Database
+                </Link>
+                <div className="h-[1px] bg-[rgba(255,255,255,0.1)] my-2" />
+                <button
+                  onClick={() => {
+                    refreshUser();
+                    notifications.showNotification({
+                      title: "Dev Tools",
+                      message: "Refreshing user data...",
+                      iconName: "BugPlay"
+                    });
+                  }}
+                  className="flex items-center gap-3 p-3 w-full cursor-pointer rounded-md hover:bg-[rgba(255,255,255,0.1)] text-white text-sm"
+                >
+                  <Icon iconName="BugPlay" className="h-[18px]" />
+                  Refresh User Data
+                </button>
               </>
-            )} */}
+            )}
             <div className="h-[1px] bg-[rgba(255,255,255,0.1)] my-2" />
             <Link
               href="https://api.whisp.bot/auth/logout"
@@ -149,7 +159,7 @@ const HeaderUser = () => {
     return (
       <div className="size-full flex flex-row-reverse py-[0.1vh]">
         <Link
-          href="https://beta.api.whisp.bot/auth"
+          href="https://beta.api.whisp.bot/auth/login"
           className="h-full w-[7vw] rounded-md bg-secondary duration-200 hover:brightness-125 text-[1.7vh] font-semibold flex items-center justify-center"
         >
           Login
