@@ -26,6 +26,21 @@ const BotStatus = () => {
     if (websocket.socket?.hasListeners("shard_update"))
       websocket.socket?.removeEventListener("shard_update");
 
+    if (websocket.socket?.hasListeners("resharding"))
+      websocket.socket?.removeEventListener("resharding");
+
+    websocket.addEventListener("resharding", (shards: number) => {
+      setShards(
+        Array.from({ length: shards }, () => ({
+          state: ShardState.LOADING,
+          lastAck: new Date(0),
+          ping: 0
+        }))
+      );
+      setPreviousLogs(["Resharding..."]);
+      setLastLog(Array.from({ length: shards }, () => ""));
+    });
+
     websocket.addEventListener("shard_debug", (data: string) => {
       const shard_data: {
         shard_id: number;
