@@ -31,6 +31,7 @@ const BotStatus = () => {
         shard_id: number;
         total_shards: number;
         message: string;
+        type: number;
         ping: number;
       } = JSON.parse(data);
 
@@ -48,7 +49,15 @@ const BotStatus = () => {
       setPreviousLogs((prev) => {
         let updated = [...prev];
         updated.unshift(
-          `[Shard ${shard_data.shard_id
+          `[${new Date(Date.now())
+            .getHours()
+            .toString()
+            .padStart(2, "0")}:${new Date(Date.now())
+            .getMinutes()
+            .toString()
+            .padStart(2, "0")}][${
+            shard_data.type == 1 ? "ERROR" : "DEBUG"
+          }][Shard ${shard_data.shard_id
             .toString()
             .padStart((shard_data.total_shards - 1).toString().length, "0")}] ${
             shard_data.message
