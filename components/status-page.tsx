@@ -3,6 +3,7 @@ import React from "react";
 import * as Icons from "lucide-react";
 import Icon from "./icon";
 import { useRouter } from "next/navigation";
+import { useNotification } from "@/components/notification-context";
 
 export type IconNames = keyof typeof Icons;
 
@@ -76,6 +77,8 @@ const StatusPage = ({
 }) => {
   const { icon, name, subtext, color, reasons } = PresetValues[code];
 
+  const notifications = useNotification();
+
   const textColor = {
     red: "text-red-500",
     orange: "text-orange-400"
@@ -125,6 +128,11 @@ const StatusPage = ({
           <button
             onClick={() => {
               navigator.clipboard.writeText(error_id);
+              notifications.showNotification({
+                title: "Copied Error ID",
+                message: "The error ID has been copied to your clipboard.",
+                iconName: "Clipboard"
+              });
             }}
             className="flex flex-row text-tertiary hover:text-primary duration-200 cursor-pointer mt-5 bg-black/10 
             p-1 px-2 rounded-md shadow-sm hover:shadow-md"
